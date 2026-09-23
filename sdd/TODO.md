@@ -4,9 +4,10 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 ## E1-S2 Validate player names (02-e1-s2-validate-player-names.md)
 
-- [ ] whitespace-only names pass validation
-- [ ] comparison is case-sensitive ("bob" ≠ "Bob")
-- [ ] changing names mid-match does not reset the board (see E6).
+- [x] whitespace-only names pass validation, and surrounding spaces are kept ("Bob " ≠ "Bob") (see E6-S6).
+- [x] comparison is case-sensitive ("bob" ≠ "Bob") (see E6-S6).
+- [x] invalid names are accepted silently; the form shows no error (see E6-S6).
+- [x] changing names mid-match does not reset the board (see E6-S6).
 
 ## E2-S5 Detect a draw (08-e2-s5-detect-a-draw.md)
 
@@ -46,10 +47,10 @@ Each story is a proposed change, not existing behaviour. Sub-items are the story
   - [ ] New endpoint (e.g. `POST /api/v1/players/:name/results` with `result: win|loss|draw`) finds-or-creates the player and increments atomically.
   - [ ] Client stops sending absolute counter values.
   - [ ] Player names are unique (DB index + model validation).
-- [ ] E6-S6 Tighten name validation and match lifecycle ([31-e6-s6-tighten-name-validation-and-match-lifecycle.md](31-e6-s6-tighten-name-validation-and-match-lifecycle.md))
-  - [ ] Names are trimmed; blank-after-trim is rejected; duplicate check is case-insensitive.
-  - [ ] The form shows an error message instead of silently doing nothing.
-  - [ ] Changing names resets the board.
+- [x] E6-S6 Tighten name validation and match lifecycle ([31-e6-s6-tighten-name-validation-and-match-lifecycle.md](31-e6-s6-tighten-name-validation-and-match-lifecycle.md))
+  - [x] Names are trimmed; blank-after-trim is rejected; duplicate check is case-insensitive.
+  - [x] The form shows an error message instead of silently doing nothing.
+  - [x] Changing names resets the board.
 - [ ] E6-S7 Restrict CORS and protect write endpoints ([32-e6-s7-restrict-cors-and-protect-write-endpoints.md](32-e6-s7-restrict-cors-and-protect-write-endpoints.md))
   - [ ] CORS origins come from configuration instead of `*`.
   - [ ] DELETE (and ideally direct PUT) require an admin credential or are removed from the public API.

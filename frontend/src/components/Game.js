@@ -35,8 +35,19 @@ function calculateWinner(squares) {
   return null;
 }
 
+//Returns why a pair of names is not valid, or null if it is valid
+function namesError(player1, player2) {
+  if (player1.trim() === "" || player2.trim() === "") {
+    return "Both players need a name.";
+  }
+  if (player1.trim().toLowerCase() === player2.trim().toLowerCase()) {
+    return "The players need different names.";
+  }
+  return null;
+}
+
 function playersSet(player1, player2) {
-  return player1 !== "" && player2 !== "" && player1 !== player2;
+  return namesError(player1, player2) === null;
 }
 
 class Board extends React.Component {
@@ -48,7 +59,8 @@ class Board extends React.Component {
       squares: Array(9).fill(null),
       xTurn: firstTurn,
       player_one: "",
-      player_two: ""
+      player_two: "",
+      nameError: null
     };
     //Bind the form submit for setting player names
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -72,11 +84,27 @@ class Board extends React.Component {
   }
   //Submit function on form for setting player names
   handleSubmit(event) {
-    this.setState({
-      player_one: event.target.player_one.value,
-      player_two: event.target.player_two.value
-    });
     event.preventDefault(); //Prevents page reloading
+    const fields = event.target.elements;
+    const player_one = fields.namedItem("player_one").value.trim();
+    const player_two = fields.namedItem("player_two").value.trim();
+    const nameError = namesError(player_one, player_two);
+    if (nameError) {
+      //Reject the pair and keep the current names
+      this.setState({ nameError: nameError });
+      return;
+    }
+    const namesChanged =
+      player_one !== this.state.player_one ||
+      player_two !== this.state.player_two;
+    this.setState({
+      player_one: player_one,
+      player_two: player_two,
+      nameError: null
+    });
+    if (namesChanged) {
+      this.resetBoard(); //New players start a new match
+    }
   }
   //draws a single square of the board
   renderSquare(i) {
@@ -181,6 +209,11 @@ class Board extends React.Component {
           >
             <div>
               <form onSubmit={this.handleSubmit}>
+                {this.state.nameError && (
+                  <div className="name-error" role="alert">
+                    {this.state.nameError}
+                  </div>
+                )}
                 <label>
                   Player One
                   <input
@@ -227,4 +260,4 @@ class Game extends React.Component {
   }
 }
 
-export {Square, Board, Game, calculateWinner};
+export {Square, Board, Game, calculateWinner, playersSet};

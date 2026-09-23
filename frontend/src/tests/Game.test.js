@@ -1,7 +1,7 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 
-import { Board, Square, calculateWinner } from "../components/Game.js";
+import { Board, Square, calculateWinner, playersSet } from "../components/Game.js";
 
 describe("calculateWinner", () => {
   describe("Unfinished game", () => {
@@ -81,5 +81,93 @@ describe("Board", () => {
     const squares = board.queryAllByTestId("board-square");
 
     expect(squares.length).toBe(9);
+  });
+});
+
+describe("playersSet", () => {
+  it("Should accept two different names", () => {
+    expect(playersSet("Bob", "Alice")).toBe(true);
+  });
+  it("Should reject a blank name", () => {
+    expect(playersSet("", "Alice")).toBe(false);
+  });
+  it("Should reject a whitespace-only name", () => {
+    expect(playersSet("   ", "Alice")).toBe(false);
+  });
+  it("Should reject names that differ only in case", () => {
+    expect(playersSet("bob", "Bob")).toBe(false);
+  });
+  it("Should reject names that differ only in surrounding spaces", () => {
+    expect(playersSet("Bob ", "Bob")).toBe(false);
+  });
+});
+
+describe("Board name form", () => {
+  const submitNames = (board, playerOne, playerTwo) => {
+    const findForm = () => board.container.ownerDocument.querySelector("form");
+    if (!findForm()) {
+      //The popup stays open after a submit, so open it only once
+      fireEvent.click(board.getByText("Set Names"));
+    }
+    const form = findForm();
+    form.elements.namedItem("player_one").value = playerOne;
+    form.elements.namedItem("player_two").value = playerTwo;
+    fireEvent.submit(form);
+  };
+  const header = board => board.container.querySelector(".players").textContent.trim();
+  const errorText = board => {
+    const error = board.container.ownerDocument.querySelector(".name-error");
+    return error ? error.textContent : null;
+  };
+  const filledSquares = board =>
+    board.queryAllByTestId("board-square").filter(square => square.innerHTML !== "").length;
+
+  it("Should trim the names before it shows them", () => {
+    const board = render(<Board />);
+    submitNames(board, "  Bob ", " Alice  ");
+
+    expect(header(board)).toBe("Bob Vs. Alice");
+    expect(errorText(board)).toBeNull();
+  });
+  it("Should show an error for a whitespace-only name", () => {
+    const board = render(<Board />);
+    submitNames(board, "   ", "Alice");
+
+    expect(header(board)).toBe("Set the names of both players.");
+    expect(errorText(board)).toBe("Both players need a name.");
+  });
+  it("Should show an error for names that differ only in case", () => {
+    const board = render(<Board />);
+    submitNames(board, "bob", "Bob");
+
+    expect(header(board)).toBe("Set the names of both players.");
+    expect(errorText(board)).toBe("The players need different names.");
+  });
+  it("Should keep the current names when a pair is rejected", () => {
+    const board = render(<Board />);
+    submitNames(board, "Bob", "Alice");
+    submitNames(board, "", "Alice");
+
+    expect(header(board)).toBe("Bob Vs. Alice");
+    expect(errorText(board)).toBe("Both players need a name.");
+  });
+  it("Should reset the board when the names change", () => {
+    const board = render(<Board />);
+    submitNames(board, "Bob", "Alice");
+    fireEvent.click(board.queryAllByTestId("board-square")[0]);
+    expect(filledSquares(board)).toBe(1);
+
+    submitNames(board, "Carol", "Alice");
+
+    expect(filledSquares(board)).toBe(0);
+  });
+  it("Should keep the board when the same names are submitted again", () => {
+    const board = render(<Board />);
+    submitNames(board, "Bob", "Alice");
+    fireEvent.click(board.queryAllByTestId("board-square")[0]);
+
+    submitNames(board, "Bob", "Alice");
+
+    expect(filledSquares(board)).toBe(1);
   });
 });
