@@ -60,3 +60,15 @@ These gaps are in E6-S5 but the TODO does not list them.
   - `Scoreboard.test.js:62-123` asserts PUT and POST bodies with absolute counters. These tests must change too.
   - jsdom has no `MutationObserver`, so `waitFor` and `findBy*` fail. Use `flushPromises` (`setImmediate`), as in `Scoreboard.test.js:43`.
   - Tests control request timing with a manual resolver (`Scoreboard.test.js:97-104`). Reuse this for "two results before the first request returns".
+
+## Follow-up specs
+
+E6-S5 makes these specs out of date. Step 2 does not change them.
+
+- `sdd/11-e3-s2-record-a-result-for-a-new-player.md`: says `createPlayer` POSTs a count of 1. The client now sends `POST /api/v1/players/results` with `{ name, result }`.
+- `sdd/12-e3-s3-record-a-result-for-a-returning-player.md`: says `updatePlayer` increments the counter and PUTs `/api/v1/players/:id`. The server now increments.
+- `sdd/14-e4-s1-player-data-model.md`: needs the unique name rule (DB index and model validation, case-sensitive).
+- `sdd/16-e4-s3-create-a-player.md`: a POST with a known name now returns 422.
+- `sdd/17-e4-s4-update-a-player-s-stats.md`: PUT still accepts absolute counters. A PUT that sets the name of another player now returns 422. E6-S7 covers protection of this endpoint.
+- `sdd/20-e4-s7-seed-demo-data.md`: a second `db:seed` must not make duplicate players.
+- `sdd/24-e5-s4-back-end-model-tests.md`: needs a test for the uniqueness of `name`.
