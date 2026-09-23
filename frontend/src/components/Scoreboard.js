@@ -6,6 +6,7 @@ class Scoreboard extends React.Component {
   _state = {
     players: []
   };
+  creating = {}; //POSTs in flight, by player name
   get state() {
     return this._state;
   }
@@ -38,9 +39,9 @@ class Scoreboard extends React.Component {
       draws++;
     } else {
       alert("Invalid game result passed!");
-      return;
+      return Promise.resolve();
     }
-    axios
+    return axios
       .post("/api/v1/players", { player: { name, wins, losses, draws } })
       .then(response => {
         const players = [...this.state.players, response.data];
@@ -51,10 +52,20 @@ class Scoreboard extends React.Component {
   }
   
   updatePlayer(name, result) {
+    if (this.creating[name]) {
+      //The player is still being created; wait so the result goes to its id
+      this.creating[name].then(() => this.updatePlayer(name, result));
+      return;
+    }
     const id = this.playerIndex(name);
     if (!id) {
       //New player, first create in database
-      this.createPlayer(name, result);
+      const creating = this.createPlayer(name, result)
+        .catch(error => console.log(error))
+        .then(() => {
+          delete this.creating[name];
+        });
+      this.creating[name] = creating;
     } else {
         const players = this.state.players.slice();
         const row = players.findIndex((player) => {return player.id === id});

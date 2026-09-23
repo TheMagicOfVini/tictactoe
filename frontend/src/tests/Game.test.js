@@ -220,3 +220,66 @@ describe("Board draw", () => {
     expect(axios.put).not.toHaveBeenCalled();
   });
 });
+
+describe("Board win", () => {
+  //The first mover gets the top row: 0, 1, 2. The second mover gets 3, 4.
+  const winOrder = [0, 3, 1, 4, 2];
+  const playWin = board => {
+    const squares = board.queryAllByTestId("board-square");
+    winOrder.forEach(i => fireEvent.click(squares[i]));
+  };
+  const posted = () => axios.post.mock.calls.map(call => call[1].player);
+  const firstMover = mark => {
+    //Board moves X first when Math.random() < 0.5
+    jest.spyOn(Math, "random").mockReturnValue(mark === "X" ? 0.1 : 0.9);
+  };
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("Should give Player One a win and Player Two a loss on an O win", () => {
+    firstMover("O");
+    const board = render(<Board />);
+    submitNames(board, "Bob", "Alice");
+    playWin(board);
+
+    expect(posted()).toHaveLength(2);
+    expect(posted()).toEqual(
+      expect.arrayContaining([
+        { name: "Bob", wins: 1, losses: 0, draws: 0 },
+        { name: "Alice", wins: 0, losses: 1, draws: 0 }
+      ])
+    );
+  });
+  it("Should give Player One a loss and Player Two a win on an X win", () => {
+    firstMover("X");
+    const board = render(<Board />);
+    submitNames(board, "Bob", "Alice");
+    playWin(board);
+
+    expect(posted()).toHaveLength(2);
+    expect(posted()).toEqual(
+      expect.arrayContaining([
+        { name: "Bob", wins: 0, losses: 1, draws: 0 },
+        { name: "Alice", wins: 1, losses: 0, draws: 0 }
+      ])
+    );
+  });
+  it("Should send no request when the board renders again after the game ends", async () => {
+    firstMover("O");
+    const board = render(<Board />);
+    submitNames(board, "Bob", "Alice");
+    playWin(board);
+    //Let the POSTs return, so a second result would be a PUT
+    await new Promise(resolve => setImmediate(resolve));
+
+    submitNames(board, "Bob", "Alice");
+    submitNames(board, "", "Alice");
+    fireEvent.click(board.queryAllByTestId("board-square")[8]);
+    await new Promise(resolve => setImmediate(resolve));
+
+    expect(axios.post).toHaveBeenCalledTimes(2);
+    expect(axios.put).not.toHaveBeenCalled();
+  });
+});

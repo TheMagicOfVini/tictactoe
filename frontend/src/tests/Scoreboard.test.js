@@ -84,3 +84,41 @@ describe("Scoreboard returning player", () => {
     ]);
   });
 });
+
+describe("Scoreboard new player", () => {
+  const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+  const rows = component =>
+    Array.from(component.container.querySelectorAll("tr"))
+      .slice(1) //Skip the header row
+      .map(row => Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim()));
+
+  it("Should wait for the POST of a new player before a second result", async () => {
+    axios.get.mockResolvedValue({ data: [] });
+    //The test decides when the POST returns
+    let resolvePost;
+    axios.post.mockImplementation(
+      (url, body) =>
+        new Promise(resolve => {
+          resolvePost = () => resolve({ data: { id: 5, ...body.player } });
+        })
+    );
+    const ref = React.createRef();
+    const component = render(<Scoreboard ref={ref} />);
+    await flushPromises();
+
+    ref.current.updatePlayer("Ann", "win");
+    ref.current.updatePlayer("Ann", "win");
+    await flushPromises();
+    expect(axios.post).toHaveBeenCalledTimes(1);
+
+    resolvePost();
+    await flushPromises();
+
+    expect(axios.post).toHaveBeenCalledTimes(1);
+    expect(axios.put).toHaveBeenCalledTimes(1);
+    expect(axios.put).toHaveBeenCalledWith("/api/v1/players/5", {
+      player: { wins: 2, losses: 0, draws: 0 }
+    });
+    expect(rows(component)).toEqual([["Ann", "2", "0", "0"]]);
+  });
+});

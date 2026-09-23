@@ -22,7 +22,10 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 ## E3-S4 Link game outcome to scoreboard (13-e3-s4-link-game-outcome-to-scoreboard.md)
 
-- [ ] updates are triggered from inside `render()`, so any re-render of a finished board re-submits results (see E6-S2).
+- [x] updates are triggered from inside `render()`, so any re-render of a finished board re-submits results (see [E6-S2](27-e6-s2-record-each-result-exactly-once.md)).
+- [x] a second result for a new player that arrives before the first POST returns sends a second POST and makes a duplicate row (see [E6-S2](27-e6-s2-record-each-result-exactly-once.md)).
+- [x] no test covers the win results or checks that a re-render of a finished board sends no request (see [E6-S2](27-e6-s2-record-each-result-exactly-once.md)).
+- [ ] two results for a known player before the first PUT returns send the same counters, so one result is lost (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
 ## E4-S4 Update a player's stats (17-e4-s4-update-a-player-s-stats.md)
 
@@ -35,10 +38,10 @@ Each story is a proposed change, not existing behaviour. Sub-items are the story
 - [x] E6-S1 Fix crash on draw ([26-e6-s1-fix-crash-on-draw.md](26-e6-s1-fix-crash-on-draw.md))
   - [x] The draw branch calls `this.scoreboard.current.updatePlayer(...)` (matching the win branches).
   - [x] A test covers a full-board draw and asserts both players receive +1 draw.
-- [ ] E6-S2 Record each result exactly once ([27-e6-s2-record-each-result-exactly-once.md](27-e6-s2-record-each-result-exactly-once.md))
-  - [ ] Score updates move out of `render()` into the move handler (or `componentDidUpdate` guarded by a "result recorded" flag).
-  - [ ] Re-renders after a game ends make no further API calls.
-  - [ ] Two quick results for a brand-new player don't create duplicate rows.
+- [x] E6-S2 Record each result exactly once ([27-e6-s2-record-each-result-exactly-once.md](27-e6-s2-record-each-result-exactly-once.md))
+  - [x] Score updates move out of `render()` into the move handler (or `componentDidUpdate` guarded by a "result recorded" flag).
+  - [x] Re-renders after a game ends make no further API calls.
+  - [x] Two quick results for a brand-new player don't create duplicate rows.
 - [x] E6-S3 Look up players by real id ([28-e6-s3-look-up-players-by-real-id.md](28-e6-s3-look-up-players-by-real-id.md))
   - [x] `playerIndex` returns the id from the matching player object, not the list position.
   - [x] Works when ids have gaps (e.g. after a delete).

@@ -81,6 +81,25 @@ class Board extends React.Component {
       squares: squares,
       xTurn: !this.state.xTurn //toggle who's turn it is
     });
+    this.recordResult(squares);
+  }
+  //Send the result to the scoreboard once, at the move that ends the game
+  recordResult(squares) {
+    const winner = calculateWinner(squares);
+    const player_one = this.state.player_one;
+    const player_two = this.state.player_two;
+    const board_full = squares.findIndex((el) => {return el === null;});
+
+    if (winner === "O") {
+      this.scoreboard.current.updatePlayer(player_one, "win");
+      this.scoreboard.current.updatePlayer(player_two, "loss");
+    } else if (winner === "X") {
+      this.scoreboard.current.updatePlayer(player_one, "loss");
+      this.scoreboard.current.updatePlayer(player_two, "win");
+    } else if (board_full === -1) {
+      this.scoreboard.current.updatePlayer(player_one, "draw");
+      this.scoreboard.current.updatePlayer(player_two, "draw");
+    }
   }
   //Submit function on form for setting player names
   handleSubmit(event) {
@@ -144,18 +163,12 @@ class Board extends React.Component {
 
     if (winner === "O") {
       status = "Winner: " + player_one;
-      this.scoreboard.current.updatePlayer(player_one, "win");
-      this.scoreboard.current.updatePlayer(player_two, "loss");
     } else if (winner === "X") {
       status = "Winner: " + player_two;
-      this.scoreboard.current.updatePlayer(player_one, "loss");
-      this.scoreboard.current.updatePlayer(player_two, "win");
     } else if (!arePlayersSet) {
       status = "";
     } else if (board_full === -1) {
       status = "The game is a draw!";
-      this.scoreboard.current.updatePlayer(player_one, "draw");
-      this.scoreboard.current.updatePlayer(player_two, "draw");
     } else if (this.state.xTurn === false) {
       status = player_one + "'s turn!";
     } else {
