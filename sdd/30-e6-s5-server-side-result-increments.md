@@ -8,6 +8,6 @@ As a product owner, I want the server to increment counters, so that concurrent 
 
 **Acceptance criteria**
 
-- New endpoint (e.g. `POST /api/v1/players/:name/results` with `result: win|loss|draw`) finds-or-creates the player and increments atomically.
+- New endpoint `POST /api/v1/players/results` with the body `{ name, result }` (`result: win|loss|draw`) finds-or-creates the player and increments atomically. The name is in the body, not in the path.
 - Client stops sending absolute counter values.
 - Player names are unique (DB index + model validation).

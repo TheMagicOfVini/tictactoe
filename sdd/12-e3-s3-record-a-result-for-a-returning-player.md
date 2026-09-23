@@ -8,7 +8,7 @@ As a returning player, I want my existing record updated, so that my stats accum
 
 **Acceptance criteria**
 
-- `playerIndex` returns the `id` of the loaded player object whose name matches, or `null` when no player matches. It does not use the position in the list.
-- If the name exists, `updatePlayer` takes the current counters from that player object, increments the counter that matches the result, and PUTs `/api/v1/players/:id` with that player's `id`.
-- On success only the row of that player updates, in place. The other rows and the number of rows do not change.
+- For a returning player, `updatePlayer` sends the same request as for a new player: `POST /api/v1/players/results` with the body `{ name, result }`. The client does not read the counters of the player and does not send them. The client sends no PUT.
+- The server finds the player by name. It adds 1 to the matching counter with one atomic SQL update, and it does not change the other counters. If the client sends two results for the player before the first response returns, both results count.
+- The server returns 200 and the saved player as JSON. The Scoreboard replaces the row with the same `id`. The other rows and the number of rows do not change.
 - The above holds when the ids have gaps (for example after a delete) or when the list is not sorted by id.

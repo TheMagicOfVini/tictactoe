@@ -9,4 +9,6 @@ As a developer, I want a Player record with name and result counters, so that st
 **Acceptance criteria**
 
 - `players` table: `name` (string), `wins`, `losses`, `draws` (integers, default 0), timestamps.
-- `name` is required (`validates_presence_of :name`).
+- The `players` table has a unique index on `name` (`index_players_on_name`). The database rejects a second row with the same name.
+- `name` is required and unique: `validates :name, presence: true, uniqueness: { case_sensitive: true }`. A second player with the same name is not valid.
+- The name match is case-sensitive. `Alice` and `alice` are two players, and both are valid.

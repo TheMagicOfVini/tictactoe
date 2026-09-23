@@ -9,3 +9,4 @@ As a developer, I want sample players loaded on setup, so that the scoreboard is
 **Acceptance criteria**
 
 - `rake db:setup` runs `db/seeds.rb`, creating five sample players with preset records.
+- `db/seeds.rb` uses `find_or_create_by!` on `name`. A second `db:seed` skips the players that exist and makes no duplicate player.

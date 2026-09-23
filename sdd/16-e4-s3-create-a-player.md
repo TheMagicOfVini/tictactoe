@@ -10,3 +10,4 @@ As an API client, I want `POST /api/v1/players`, so that new players can be adde
 
 - Accepts `{ player: { name, wins, losses, draws } }`.
 - Returns 201 with the created player and a Location header, or 422 with validation errors.
+- If a player with the same name exists, it returns 422 and the error `name: ["has already been taken"]`. It creates no second player.

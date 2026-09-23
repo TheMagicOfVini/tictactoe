@@ -8,6 +8,7 @@ As a first-time player, I want my result saved automatically when a match ends, 
 
 **Acceptance criteria**
 
-- If the player's name is not in the loaded list, `createPlayer` POSTs `/api/v1/players` with the name and a count of 1 in the matching column (win, loss or draw).
-- The new player row is appended to the table from the API response.
-- An unrecognised result value shows an alert and nothing is saved.
+- For a new player, `updatePlayer` sends one request: `POST /api/v1/players/results` with the body `{ name, result }`. `result` is `win`, `loss` or `draw`. The body has no `id`, `wins`, `losses` or `draws`. The client does not look for the name in the loaded list. It sends the same request for a new player and for a known player.
+- The server does not find the name, so it creates the player with 1 in the matching counter and 0 in the other counters.
+- The server returns 200 and the saved player as JSON. The Scoreboard appends this player to the table. If a second result for the same new player returns later, the Scoreboard replaces that row by `id`. The table has one row for the player.
+- If `result` is not `win`, `loss` or `draw`, the server returns 422 and saves nothing. The client logs the error and does not change the table. The client shows no alert.

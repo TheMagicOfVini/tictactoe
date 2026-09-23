@@ -16,14 +16,14 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 ## E3-S2 Record a result for a new player (11-e3-s2-record-a-result-for-a-new-player.md)
 
-- [ ] the spec says that `createPlayer` POSTs a count of 1 to `/api/v1/players`. The client now sends `POST /api/v1/players/results` with `{ name, result }`. Update the spec (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] the spec says that `createPlayer` POSTs a count of 1 to `/api/v1/players`. The client now sends `POST /api/v1/players/results` with `{ name, result }`. Update the spec (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
 ## E3-S3 Record a result for a returning player (12-e3-s3-record-a-result-for-a-returning-player.md)
 
 - [x] the player's database id is derived from their position in the list (`index + 1`), which breaks once any player is deleted or ids are non-contiguous (see [E6-S3](28-e6-s3-look-up-players-by-real-id.md)).
 - [x] `updatePlayer` reads and writes the row at `players[id - 1]`, so a real id would pick the wrong row (see [E6-S3](28-e6-s3-look-up-players-by-real-id.md)).
 - [x] no test covers a result for a returning player (see [E6-S3](28-e6-s3-look-up-players-by-real-id.md)).
-- [ ] the spec says that `updatePlayer` adds 1 to the counter and PUTs `/api/v1/players/:id`. The server now adds 1, and the client sends `POST /api/v1/players/results` with `{ name, result }`. Update the spec (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] the spec says that `updatePlayer` adds 1 to the counter and PUTs `/api/v1/players/:id`. The server now adds 1, and the client sends `POST /api/v1/players/results` with `{ name, result }`. Update the spec (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
 ## E3-S4 Link game outcome to scoreboard (13-e3-s4-link-game-outcome-to-scoreboard.md)
 
@@ -45,11 +45,11 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 ## E4-S1 Player data model (14-e4-s1-player-data-model.md)
 
-- [ ] the spec has no unique name rule. Add the unique index on `name`, the uniqueness validation and the case-sensitive match (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] the spec has no unique name rule. Add the unique index on `name`, the uniqueness validation and the case-sensitive match (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
 ## E4-S3 Create a player (16-e4-s3-create-a-player.md)
 
-- [ ] the spec does not say that a POST with a known name returns 422 (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] the spec does not say that a POST with a known name returns 422 (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
 ## E4-S4 Update a player's stats (17-e4-s4-update-a-player-s-stats.md)
 
@@ -58,15 +58,15 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 - [x] the stray `PUT /api/v1/players` route (no id) goes to the unused top-level `PlayersController`, which always returns 404 (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
 - [x] `:result` is permitted but is not a column, so a POST or PUT that sends it returns 500 (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
 - [x] no request spec covers the update (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
-- [ ] the spec does not say that a PUT that sets the name of another player returns 422. PUT still accepts absolute counters; [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md) covers the protection of this endpoint (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] the spec does not say that a PUT that sets the name of another player returns 422. PUT still accepts absolute counters; [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md) covers the protection of this endpoint (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
 ## E4-S7 Seed demo data (20-e4-s7-seed-demo-data.md)
 
-- [ ] the spec does not say that a second `db:seed` makes no duplicate player (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] the spec does not say that a second `db:seed` makes no duplicate player (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
 ## E5-S4 Back-end model tests (24-e5-s4-back-end-model-tests.md)
 
-- [ ] the spec has no criterion for a test of the uniqueness of `name` (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] the spec has no criterion for a test of the uniqueness of `name` (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
 ## E6: Hardening & Defect Fixes
 
