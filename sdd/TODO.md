@@ -106,6 +106,13 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 - [x] the spec does not say that a second `db:seed` makes no duplicate player (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
+## E5-S1 Run locally without Docker (21-e5-s1-run-locally-without-docker.md)
+
+- [x] the README said Ruby 2.5.3 in the requirements line, `rvm install` and `rvm use`. `backend/.ruby-version`, the Gemfile and the Dockerfile pin 2.6.1 (see [E6-S9](34-e6-s9-align-docs-and-tooling-versions.md)).
+- [x] the README cloned the upstream fork, not the `origin` remote of this repository (see [E6-S9](34-e6-s9-align-docs-and-tooling-versions.md)).
+- [x] git tracked `backend/db/development.sqlite3`, `backend/db/test.sqlite3`, `backend/log/development.log` and `backend/db/.seeds.rb.swp`. `.gitignore` had `backend/log/*` but no rule for `*.sqlite3` or `*.swp` (see [E6-S9](34-e6-s9-align-docs-and-tooling-versions.md)).
+- [x] no test checked the README against the version files or the git index (see [E6-S9](34-e6-s9-align-docs-and-tooling-versions.md)).
+
 ## E5-S3 Front-end unit tests (23-e5-s3-front-end-unit-tests.md)
 
 - [x] the Scoreboard "should render" test passes a `players` prop that the component ignores, and the file defines `flushPromises` and `rows` twice (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
@@ -149,7 +156,8 @@ Each story is a proposed change, not existing behaviour. Sub-items are the story
   - [x] RSpec request specs cover index, show, create (valid/invalid), update and destroy, using the existing `RequestSpecHelper`.
   - [x] React Testing Library tests cover: clicks ignored before names are set, alternating turns, win and draw status messages, New Game reset, and scoreboard API calls (with axios mocked).
   - [x] The Scoreboard test is rewritten; it currently passes a `players` prop the component ignores.
-- [ ] E6-S9 Align docs and tooling versions ([34-e6-s9-align-docs-and-tooling-versions.md](34-e6-s9-align-docs-and-tooling-versions.md))
-  - [ ] README Ruby version matches the Gemfile/Dockerfile (2.6.1, not 2.5.3).
-  - [ ] README clone URL points at this repository.
-  - [ ] Committed SQLite databases, `development.log` and the `.seeds.rb.swp` swap file are removed and git-ignored.
+- [x] E6-S9 Align docs and tooling versions ([34-e6-s9-align-docs-and-tooling-versions.md](34-e6-s9-align-docs-and-tooling-versions.md))
+  - [x] README Ruby version matches the Gemfile/Dockerfile (2.6.1, not 2.5.3).
+  - [x] README clone URL points at this repository.
+  - [x] Committed SQLite databases, `development.log` and the `.seeds.rb.swp` swap file are removed and git-ignored.
+  - [x] A back-end spec under `backend/spec/repo/` checks the README, the version files and the git index.

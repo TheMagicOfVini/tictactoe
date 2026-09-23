@@ -13,12 +13,12 @@ Try it live at: https://obscure-springs-73090.herokuapp.com/
 sudo apt install nodejs -y
 ```
 
-* Backend: Ruby 2.5.3, Rails 5.2.1
+* Backend: Ruby 2.6.1, Rails 5.2.1
 
 ```
 \curl -sSL https://get.rvm.io | bash -s stable --ruby
-rvm install 2.5.3
-rvm use ruby-2.5.3
+rvm install 2.6.1
+rvm use ruby-2.6.1
 gem install rails
 ```
 
@@ -54,7 +54,7 @@ docker-compose exec web bash
 ## Running Without Docker
 * Open two terminal windows, in the first run:
 ```
-git clone https://github.com/MiloTodt/tictactoe.git
+git clone https://github.com/jleveck/tictactoe.git
 cd tictactoe
 cd backend
 bundle install
