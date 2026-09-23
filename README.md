@@ -22,6 +22,13 @@ rvm use ruby-2.5.3
 gem install rails
 ```
 
+## Environment Variables
+
+* `CORS_ORIGINS`: a comma-separated list of the origins that may call the API, for example `http://localhost:3000,https://example.com`. The app trims spaces around each origin and drops empty entries.
+  * In development and in test, the app uses `http://localhost:3000` when `CORS_ORIGINS` is not set.
+  * In production, `CORS_ORIGINS` is required. The app fails to boot with a clear error when it is not set or is blank.
+  * For the live Heroku demo, set `CORS_ORIGINS` to the app's own URL (`https://obscure-springs-73090.herokuapp.com`), since the API and the React build are served from one origin.
+
 ## Running With Docker
 * Open three terminal windows, in the first run:
 ```

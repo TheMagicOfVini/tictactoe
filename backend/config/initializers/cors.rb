@@ -1,7 +1,9 @@
+require Rails.root.join('lib', 'cors_origins')
+
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins '*'
- 
+    origins CorsOrigins.list(ENV, Rails.env)
+
     resource '*',
              headers: :any,
              methods: [:get, :post, :put, :patch, :delete, :options, :head],
