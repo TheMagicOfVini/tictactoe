@@ -28,12 +28,12 @@ class Api::V1::PlayersController < ApplicationController
 
   # PATCH/PUT /players/1
   def update
-      if @player.update(player_params)
-        render json: @list
-      else
-        render json: @list.errors, status: :unprocessable_entity
-      end
+    if @player.update(player_params)
+      render json: @player
+    else
+      render json: @player.errors, status: :unprocessable_entity
     end
+  end
 
   # DELETE /players/1
   def destroy
@@ -51,6 +51,6 @@ class Api::V1::PlayersController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def player_params
-    params.require(:player).permit(:name, :result, :wins, :losses, :draws)
+    params.require(:player).permit(:name, :wins, :losses, :draws)
   end
 end

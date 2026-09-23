@@ -29,7 +29,11 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 ## E4-S4 Update a player's stats (17-e4-s4-update-a-player-s-stats.md)
 
-- [ ] the action renders `@list` (never assigned), so success returns `null` and a failure would raise (see E6-S4).
+- [x] the action renders `@list` (never assigned), so success returns `null` and a failure would raise (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
+- [x] a failed update (for example a blank `name`) calls `@list.errors` and returns 500 instead of 422 (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
+- [x] the stray `PUT /api/v1/players` route (no id) goes to the unused top-level `PlayersController`, which always returns 404 (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
+- [x] `:result` is permitted but is not a column, so a POST or PUT that sends it returns 500 (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
+- [x] no request spec covers the update (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
 
 ## E6: Hardening & Defect Fixes
 
@@ -45,10 +49,10 @@ Each story is a proposed change, not existing behaviour. Sub-items are the story
 - [x] E6-S3 Look up players by real id ([28-e6-s3-look-up-players-by-real-id.md](28-e6-s3-look-up-players-by-real-id.md))
   - [x] `playerIndex` returns the id from the matching player object, not the list position.
   - [x] Works when ids have gaps (e.g. after a delete).
-- [ ] E6-S4 Return the updated player from PUT ([29-e6-s4-return-the-updated-player-from-put.md](29-e6-s4-return-the-updated-player-from-put.md))
-  - [ ] `update` renders `@player` / `@player.errors`.
-  - [ ] The stray `PUT /api/v1/players` route (no id, pointing at the non-namespaced controller) and the unused top-level `PlayersController` are removed.
-  - [ ] Unused `:result` / `:slug` params are removed from the permit lists.
+- [x] E6-S4 Return the updated player from PUT ([29-e6-s4-return-the-updated-player-from-put.md](29-e6-s4-return-the-updated-player-from-put.md))
+  - [x] `update` renders `@player` / `@player.errors`.
+  - [x] The stray `PUT /api/v1/players` route (no id, pointing at the non-namespaced controller) and the unused top-level `PlayersController` are removed.
+  - [x] Unused `:result` / `:slug` params are removed from the permit lists.
 - [ ] E6-S5 Server-side result increments ([30-e6-s5-server-side-result-increments.md](30-e6-s5-server-side-result-increments.md))
   - [ ] New endpoint (e.g. `POST /api/v1/players/:name/results` with `result: win|loss|draw`) finds-or-creates the player and increments atomically.
   - [ ] Client stops sending absolute counter values.
