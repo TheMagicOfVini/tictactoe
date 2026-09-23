@@ -11,7 +11,9 @@ beforeEach(() => {
   axios.post.mockReset();
   axios.put.mockReset();
   axios.get.mockResolvedValue({ data: [] });
-  axios.post.mockImplementation((url, body) => Promise.resolve({ data: body.player }));
+  axios.post.mockImplementation((url, body) =>
+    Promise.resolve({ data: { id: axios.post.mock.calls.length, ...body.player } })
+  );
   axios.put.mockResolvedValue({ data: {} });
 });
 
