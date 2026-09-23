@@ -1,7 +1,31 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
+import axios from "axios";
 
 import { Board, Square, calculateWinner, playersSet } from "../components/Game.js";
+
+jest.mock("axios", () => ({ get: jest.fn(), post: jest.fn(), put: jest.fn() }));
+
+beforeEach(() => {
+  axios.get.mockReset();
+  axios.post.mockReset();
+  axios.put.mockReset();
+  axios.get.mockResolvedValue({ data: [] });
+  axios.post.mockImplementation((url, body) => Promise.resolve({ data: body.player }));
+  axios.put.mockResolvedValue({ data: {} });
+});
+
+const submitNames = (board, playerOne, playerTwo) => {
+  const findForm = () => board.container.ownerDocument.querySelector("form");
+  if (!findForm()) {
+    //The popup stays open after a submit, so open it only once
+    fireEvent.click(board.getByText("Set Names"));
+  }
+  const form = findForm();
+  form.elements.namedItem("player_one").value = playerOne;
+  form.elements.namedItem("player_two").value = playerTwo;
+  fireEvent.submit(form);
+};
 
 describe("calculateWinner", () => {
   describe("Unfinished game", () => {
@@ -103,17 +127,6 @@ describe("playersSet", () => {
 });
 
 describe("Board name form", () => {
-  const submitNames = (board, playerOne, playerTwo) => {
-    const findForm = () => board.container.ownerDocument.querySelector("form");
-    if (!findForm()) {
-      //The popup stays open after a submit, so open it only once
-      fireEvent.click(board.getByText("Set Names"));
-    }
-    const form = findForm();
-    form.elements.namedItem("player_one").value = playerOne;
-    form.elements.namedItem("player_two").value = playerTwo;
-    fireEvent.submit(form);
-  };
   const header = board => board.container.querySelector(".players").textContent.trim();
   const errorText = board => {
     const error = board.container.ownerDocument.querySelector(".name-error");
@@ -169,5 +182,39 @@ describe("Board name form", () => {
     submitNames(board, "Bob", "Alice");
 
     expect(filledSquares(board)).toBe(1);
+  });
+});
+
+describe("Board draw", () => {
+  //The first mover gets 0, 2, 3, 7, 8 and the second mover gets 1, 4, 5, 6.
+  //Neither set has a line, so the game is a draw no matter who moves first.
+  const drawOrder = [0, 1, 2, 4, 3, 5, 7, 6, 8];
+  const playDraw = board => {
+    const squares = board.queryAllByTestId("board-square");
+    drawOrder.forEach(i => fireEvent.click(squares[i]));
+  };
+  const status = board => board.container.querySelector(".status").textContent.trim();
+
+  it("Should show the draw status without an error", () => {
+    const board = render(<Board />);
+    submitNames(board, "Bob", "Alice");
+
+    expect(() => playDraw(board)).not.toThrow();
+    expect(status(board)).toBe("The game is a draw!");
+  });
+  it("Should give each player exactly one draw", () => {
+    const board = render(<Board />);
+    submitNames(board, "Bob", "Alice");
+    playDraw(board);
+
+    const posted = axios.post.mock.calls.map(call => call[1].player);
+    expect(posted).toHaveLength(2);
+    expect(posted).toEqual(
+      expect.arrayContaining([
+        { name: "Bob", wins: 0, losses: 0, draws: 1 },
+        { name: "Alice", wins: 0, losses: 0, draws: 1 }
+      ])
+    );
+    expect(axios.put).not.toHaveBeenCalled();
   });
 });

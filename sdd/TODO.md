@@ -11,7 +11,8 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 ## E2-S5 Detect a draw (08-e2-s5-detect-a-draw.md)
 
-- [ ] the draw branch calls `this.child.scoreboard.updatePlayer(...)`, which is undefined and throws at runtime (see E6-S1).
+- [x] the draw branch calls `this.child.scoreboard.updatePlayer(...)`, which is undefined and throws at runtime (see [E6-S1](26-e6-s1-fix-crash-on-draw.md)).
+- [x] no test covers a full-board draw, its status message or the draw recorded for each player (see [E6-S1](26-e6-s1-fix-crash-on-draw.md)).
 
 ## E3-S3 Record a result for a returning player (12-e3-s3-record-a-result-for-a-returning-player.md)
 
@@ -29,9 +30,9 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 Each story is a proposed change, not existing behaviour. Sub-items are the story's acceptance criteria.
 
-- [ ] E6-S1 Fix crash on draw ([26-e6-s1-fix-crash-on-draw.md](26-e6-s1-fix-crash-on-draw.md))
-  - [ ] The draw branch calls `this.scoreboard.current.updatePlayer(...)` (matching the win branches).
-  - [ ] A test covers a full-board draw and asserts both players receive +1 draw.
+- [x] E6-S1 Fix crash on draw ([26-e6-s1-fix-crash-on-draw.md](26-e6-s1-fix-crash-on-draw.md))
+  - [x] The draw branch calls `this.scoreboard.current.updatePlayer(...)` (matching the win branches).
+  - [x] A test covers a full-board draw and asserts both players receive +1 draw.
 - [ ] E6-S2 Record each result exactly once ([27-e6-s2-record-each-result-exactly-once.md](27-e6-s2-record-each-result-exactly-once.md))
   - [ ] Score updates move out of `render()` into the move handler (or `componentDidUpdate` guarded by a "result recorded" flag).
   - [ ] Re-renders after a game ends make no further API calls.

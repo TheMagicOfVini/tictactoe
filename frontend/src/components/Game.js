@@ -154,8 +154,8 @@ class Board extends React.Component {
       status = "";
     } else if (board_full === -1) {
       status = "The game is a draw!";
-      this.child.scoreboard.updatePlayer(player_one, "draw");
-      this.child.scoreboard.updatePlayer(player_two, "draw");
+      this.scoreboard.current.updatePlayer(player_one, "draw");
+      this.scoreboard.current.updatePlayer(player_two, "draw");
     } else if (this.state.xTurn === false) {
       status = player_one + "'s turn!";
     } else {

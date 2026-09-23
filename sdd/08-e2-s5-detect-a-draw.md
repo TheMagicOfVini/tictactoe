@@ -9,3 +9,5 @@ As a player, I want the game to declare a draw when the board fills with no winn
 **Acceptance criteria**
 
 - When no square is null and there is no winner, the status reads "The game is a draw!".
+- When the game ends in a draw, each player receives exactly one +1 draw on the scoreboard, through the same scoreboard ref that the win branches use (`this.scoreboard.current.updatePlayer(name, "draw")`).
+- A draw does not throw an error.
