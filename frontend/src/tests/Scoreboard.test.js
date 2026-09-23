@@ -148,4 +148,25 @@ describe("Scoreboard new player", () => {
     expect(rows(component)).toEqual([["Ann", "2", "0", "0"]]);
     expect(axios.put).not.toHaveBeenCalled();
   });
+  it("Should log a failed result, keep the table and show no alert", async () => {
+    const error = new Error("Request failed with status code 422");
+    axios.post.mockRejectedValueOnce(error);
+    const alert = jest.spyOn(window, "alert").mockImplementation(() => {});
+    const log = jest.spyOn(console, "log").mockImplementation(() => {});
+    const ref = React.createRef();
+    const component = render(<Scoreboard ref={ref} />);
+    await flushPromises();
+    const before = rows(component);
+
+    ref.current.updatePlayer("Ann", "tie");
+    await flushPromises();
+
+    expect(axios.post).toHaveBeenCalledWith("/api/v1/players/results", { name: "Ann", result: "tie" });
+    expect(rows(component)).toEqual(before);
+    expect(before).toHaveLength(loadedPlayers.length);
+    expect(log).toHaveBeenCalledWith(error);
+    expect(alert).not.toHaveBeenCalled();
+    alert.mockRestore();
+    log.mockRestore();
+  });
 });

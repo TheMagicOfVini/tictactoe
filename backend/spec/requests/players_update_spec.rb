@@ -43,6 +43,19 @@ RSpec.describe 'Players API update', type: :request do
       end
     end
 
+    context 'with the name of another player' do
+      before do
+        Player.create!(name: 'Ann')
+        put_player(name: 'Ann', wins: 9)
+      end
+
+      it 'returns 422 and the uniqueness error, and does not change the player' do
+        expect(response).to have_http_status(422)
+        expect(json['name']).to eq(['has already been taken'])
+        expect(player.reload.attributes).to include('name' => 'Bob', 'wins' => 1)
+      end
+    end
+
     context 'with params that are not permitted' do
       before { put_player(wins: 5, result: 'win', slug: 'bob') }
 
