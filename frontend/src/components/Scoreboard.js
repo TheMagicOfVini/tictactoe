@@ -57,7 +57,8 @@ class Scoreboard extends React.Component {
       this.createPlayer(name, result);
     } else {
         const players = this.state.players.slice();
-        const player = players[id - 1];
+        const row = players.findIndex((player) => {return player.id === id});
+        const player = players[row];
         let wins = player.wins;
         let losses = player.losses;
         let draws = player.draws;
@@ -80,7 +81,7 @@ class Scoreboard extends React.Component {
             }
           })
           .then(response => {
-            players[id - 1] = { id, name, wins, losses, draws };
+            players[row] = { id, name, wins, losses, draws };
             this.setState(() => ({
               players,
               editingPlayerId: null
@@ -92,9 +93,9 @@ class Scoreboard extends React.Component {
   }
 
   playerIndex(name) {
-    const index = this.state.players.findIndex((player) => {return player.name === name});
-    
-    return index + 1;
+    const player = this.state.players.find((player) => {return player.name === name});
+
+    return player ? player.id : null;
   }
 
   render() {

@@ -16,7 +16,9 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 ## E3-S3 Record a result for a returning player (12-e3-s3-record-a-result-for-a-returning-player.md)
 
-- [ ] the player's database id is derived from their position in the list (`index + 1`), which breaks once any player is deleted or ids are non-contiguous (see E6-S3).
+- [x] the player's database id is derived from their position in the list (`index + 1`), which breaks once any player is deleted or ids are non-contiguous (see [E6-S3](28-e6-s3-look-up-players-by-real-id.md)).
+- [x] `updatePlayer` reads and writes the row at `players[id - 1]`, so a real id would pick the wrong row (see [E6-S3](28-e6-s3-look-up-players-by-real-id.md)).
+- [x] no test covers a result for a returning player (see [E6-S3](28-e6-s3-look-up-players-by-real-id.md)).
 
 ## E3-S4 Link game outcome to scoreboard (13-e3-s4-link-game-outcome-to-scoreboard.md)
 
@@ -37,9 +39,9 @@ Each story is a proposed change, not existing behaviour. Sub-items are the story
   - [ ] Score updates move out of `render()` into the move handler (or `componentDidUpdate` guarded by a "result recorded" flag).
   - [ ] Re-renders after a game ends make no further API calls.
   - [ ] Two quick results for a brand-new player don't create duplicate rows.
-- [ ] E6-S3 Look up players by real id ([28-e6-s3-look-up-players-by-real-id.md](28-e6-s3-look-up-players-by-real-id.md))
-  - [ ] `playerIndex` returns the id from the matching player object, not the list position.
-  - [ ] Works when ids have gaps (e.g. after a delete).
+- [x] E6-S3 Look up players by real id ([28-e6-s3-look-up-players-by-real-id.md](28-e6-s3-look-up-players-by-real-id.md))
+  - [x] `playerIndex` returns the id from the matching player object, not the list position.
+  - [x] Works when ids have gaps (e.g. after a delete).
 - [ ] E6-S4 Return the updated player from PUT ([29-e6-s4-return-the-updated-player-from-put.md](29-e6-s4-return-the-updated-player-from-put.md))
   - [ ] `update` renders `@player` / `@player.errors`.
   - [ ] The stray `PUT /api/v1/players` route (no id, pointing at the non-namespaced controller) and the unused top-level `PlayersController` are removed.
