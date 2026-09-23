@@ -59,6 +59,14 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 - [x] `:result` is permitted but is not a column, so a POST or PUT that sends it returns 500 (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
 - [x] no request spec covers the update (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
 - [x] the spec does not say that a PUT that sets the name of another player returns 422. PUT still accepts absolute counters; [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md) covers the protection of this endpoint (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] `PUT/PATCH /api/v1/players/:id` runs for any caller; no credential check exists in `players_controller.rb` (see [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md)).
+- [x] the spec did not say who may call PUT (see [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md)).
+
+## E4-S5 Delete a player (18-e4-s5-delete-a-player.md)
+
+- [x] `DELETE /api/v1/players/:id` runs for any caller; no credential check exists in `players_controller.rb` (see [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md)).
+- [x] the spec did not say who may call DELETE (see [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md)).
+- [x] no request spec covered DELETE (see [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md)).
 
 ## E4-S6 Allow cross-origin requests (19-e4-s6-allow-cross-origin-requests.md)
 
@@ -101,9 +109,9 @@ Each story is a proposed change, not existing behaviour. Sub-items are the story
   - [x] Names are trimmed; blank-after-trim is rejected; duplicate check is case-insensitive.
   - [x] The form shows an error message instead of silently doing nothing.
   - [x] Changing names resets the board.
-- [ ] E6-S7 Restrict CORS and protect write endpoints ([32-e6-s7-restrict-cors-and-protect-write-endpoints.md](32-e6-s7-restrict-cors-and-protect-write-endpoints.md))
+- [x] E6-S7 Restrict CORS and protect write endpoints ([32-e6-s7-restrict-cors-and-protect-write-endpoints.md](32-e6-s7-restrict-cors-and-protect-write-endpoints.md))
   - [x] CORS origins come from `CORS_ORIGINS` instead of `*`. Production fails to boot when the variable is not set.
-  - [ ] DELETE (and ideally direct PUT) require an admin credential or are removed from the public API.
+  - [x] DELETE and direct PUT/PATCH require an admin credential: the `X-Admin-Token` header must match `ADMIN_TOKEN`. Otherwise they return 401.
 - [ ] E6-S8 Expand automated test coverage ([33-e6-s8-expand-automated-test-coverage.md](33-e6-s8-expand-automated-test-coverage.md))
   - [ ] RSpec request specs cover index, show, create (valid/invalid), update and destroy, using the existing `RequestSpecHelper`.
   - [ ] React Testing Library tests cover: clicks ignored before names are set, alternating turns, win and draw status messages, New Game reset, and scoreboard API calls (with axios mocked).

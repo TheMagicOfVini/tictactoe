@@ -8,7 +8,11 @@ As a site operator, I want only the app's own origin to modify data, so that any
 
 **Acceptance criteria**
 
-- CORS origins come from configuration instead of `*`.
-- DELETE (and ideally direct PUT) require an admin credential or are removed from the public API.
-
-  The first fix covers only CORS. The protection of `PUT` and `DELETE` is still open. The "Design choices" section of `plans/e6-s7-restrict-cors-and-protect-write-endpoints-check.md` lists the options and the facts behind them.
+- CORS origins come from configuration instead of `*` (E4-S6).
+- `PUT/PATCH /api/v1/players/:id` (E4-S4) and `DELETE /api/v1/players/:id` (E4-S5) require an admin credential:
+  - The client sends the credential in the `X-Admin-Token` request header.
+  - The app compares the header with `ENV['ADMIN_TOKEN']` in constant time. It reads the variable on each request.
+  - A request with a missing or wrong header returns 401 and `{"error": "admin token required"}`. The player does not change.
+  - When `ADMIN_TOKEN` is not set or is blank, every `PUT`, `PATCH` and `DELETE` request returns 401. The check fails closed in each environment.
+  - The app checks the credential before it looks up the player, so a request without the credential gets 401 for an unknown id too, not 404.
+- `GET /api/v1/players`, `GET /api/v1/players/:id`, `POST /api/v1/players` and `POST /api/v1/players/results` need no credential.

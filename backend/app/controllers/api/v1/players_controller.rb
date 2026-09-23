@@ -3,6 +3,8 @@
 class Api::V1::PlayersController < ApplicationController
   RESULT_COLUMNS = { 'win' => :wins, 'loss' => :losses, 'draw' => :draws }.freeze
 
+  # The admin check runs first, so a caller without the token gets 401, not 404.
+  before_action :require_admin_token, only: %i[update destroy]
   before_action :set_player, only: %i[show update destroy]
   # GET /players
   def index
@@ -60,6 +62,16 @@ class Api::V1::PlayersController < ApplicationController
   end
 
   private
+
+  # PUT, PATCH and DELETE need the X-Admin-Token header to match ENV['ADMIN_TOKEN'].
+  # An unset or blank ADMIN_TOKEN denies every request (fail closed).
+  def require_admin_token
+    expected = ENV['ADMIN_TOKEN'].to_s
+    given = request.headers['X-Admin-Token'].to_s
+    return if expected.present? && ActiveSupport::SecurityUtils.secure_compare(given, expected)
+
+    render json: { error: 'admin token required' }, status: :unauthorized
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_player

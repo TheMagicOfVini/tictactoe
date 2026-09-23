@@ -5,9 +5,53 @@ require 'rails_helper'
 RSpec.describe 'Players API update', type: :request do
   let!(:player) { Player.create!(name: 'Bob', wins: 1, losses: 2, draws: 3) }
   let(:headers) { { 'CONTENT_TYPE' => 'application/json' } }
+  let(:admin_headers) { headers.merge('X-Admin-Token' => AdminTokenHelper::ADMIN_TOKEN) }
 
-  def put_player(attributes)
-    put "/api/v1/players/#{player.id}", params: { player: attributes }.to_json, headers: headers
+  around { |example| with_admin_token(AdminTokenHelper::ADMIN_TOKEN) { example.run } }
+
+  def put_player(attributes, request_headers = admin_headers)
+    put "/api/v1/players/#{player.id}", params: { player: attributes }.to_json, headers: request_headers
+  end
+
+  describe 'PUT /api/v1/players/:id without a valid admin token' do
+    it 'returns 401 without the header and does not change the player' do
+      put_player({ wins: 9 }, headers)
+
+      expect(response).to have_http_status(401)
+      expect(json).to eq('error' => 'admin token required')
+      expect(player.reload.wins).to eq(1)
+    end
+
+    it 'returns 401 with a wrong token and does not change the player' do
+      put_player({ wins: 9 }, headers.merge('X-Admin-Token' => 'wrong'))
+
+      expect(response).to have_http_status(401)
+      expect(player.reload.wins).to eq(1)
+    end
+
+    it 'returns 401 for PATCH without the header' do
+      patch "/api/v1/players/#{player.id}", params: { player: { wins: 9 } }.to_json, headers: headers
+
+      expect(response).to have_http_status(401)
+      expect(player.reload.wins).to eq(1)
+    end
+
+    it 'returns 401, not 404, for an unknown id' do
+      put '/api/v1/players/999999', params: { player: { wins: 9 } }.to_json, headers: headers
+
+      expect(response).to have_http_status(401)
+    end
+
+    [nil, '', '   '].each do |value|
+      it "returns 401 with the header when ADMIN_TOKEN is #{value.inspect}" do
+        with_admin_token(value) do
+          put_player({ wins: 9 }, headers.merge('X-Admin-Token' => value.to_s))
+        end
+
+        expect(response).to have_http_status(401)
+        expect(player.reload.wins).to eq(1)
+      end
+    end
   end
 
   describe 'PUT /api/v1/players/:id' do
@@ -80,7 +124,7 @@ RSpec.describe 'Players API update', type: :request do
   describe 'PUT /api/v1/players without an id' do
     it 'has no route' do
       expect do
-        put '/api/v1/players', params: { player: { wins: 5 } }.to_json, headers: headers
+        put '/api/v1/players', params: { player: { wins: 5 } }.to_json, headers: admin_headers
       end.to raise_error(ActionController::RoutingError)
     end
 
