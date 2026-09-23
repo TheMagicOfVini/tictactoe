@@ -11,4 +11,4 @@ As a site operator, I want only the app's own origin to modify data, so that any
 - CORS origins come from configuration instead of `*`.
 - DELETE (and ideally direct PUT) require an admin credential or are removed from the public API.
 
-  This fix covers only CORS. The protection of `PUT` and `DELETE` is deferred. See the first item in [`enhancements.md`](enhancements.md) for the suggested fix and the facts behind it.
+  The first fix covers only CORS. The protection of `PUT` and `DELETE` is still open. The "Design choices" section of `plans/e6-s7-restrict-cors-and-protect-write-endpoints-check.md` lists the options and the facts behind them.

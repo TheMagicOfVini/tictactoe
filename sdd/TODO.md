@@ -101,8 +101,9 @@ Each story is a proposed change, not existing behaviour. Sub-items are the story
   - [x] Names are trimmed; blank-after-trim is rejected; duplicate check is case-insensitive.
   - [x] The form shows an error message instead of silently doing nothing.
   - [x] Changing names resets the board.
-- [x] E6-S7 Restrict CORS and protect write endpoints ([32-e6-s7-restrict-cors-and-protect-write-endpoints.md](32-e6-s7-restrict-cors-and-protect-write-endpoints.md))
+- [ ] E6-S7 Restrict CORS and protect write endpoints ([32-e6-s7-restrict-cors-and-protect-write-endpoints.md](32-e6-s7-restrict-cors-and-protect-write-endpoints.md))
   - [x] CORS origins come from `CORS_ORIGINS` instead of `*`. Production fails to boot when the variable is not set.
+  - [ ] DELETE (and ideally direct PUT) require an admin credential or are removed from the public API.
 - [ ] E6-S8 Expand automated test coverage ([33-e6-s8-expand-automated-test-coverage.md](33-e6-s8-expand-automated-test-coverage.md))
   - [ ] RSpec request specs cover index, show, create (valid/invalid), update and destroy, using the existing `RequestSpecHelper`.
   - [ ] React Testing Library tests cover: clicks ignored before names are set, alternating turns, win and draw status messages, New Game reset, and scoreboard API calls (with axios mocked).
