@@ -18,7 +18,14 @@ beforeEach(() => {
   axios.post.mockReset();
   axios.put.mockReset();
   axios.get.mockResolvedValue({ data: loadedPlayers.map(player => ({ ...player })) });
-  axios.put.mockResolvedValue({ data: null });
+  //The results endpoint returns the saved player: the loaded row plus 1 in the counter
+  axios.post.mockImplementation((url, { name, result }) => {
+    const known = loadedPlayers.find(player => player.name === name);
+    const player = known ? { ...known } : { id: 99, name, wins: 0, losses: 0, draws: 0 };
+    const column = { win: "wins", loss: "losses", draw: "draws" }[result];
+    player[column] += 1;
+    return Promise.resolve({ data: player });
+  });
 });
 
 const playerMocks = {
@@ -52,26 +59,19 @@ describe("Scoreboard returning player", () => {
       .slice(1) //Skip the header row
       .map(row => Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim()));
 
-  it("Should return the id of the matching player", async () => {
-    const { ref } = await renderLoaded();
-
-    expect(ref.current.playerIndex("Steve")).toBe(3);
-    expect(ref.current.playerIndex("Jeff")).toBe(7);
-    expect(ref.current.playerIndex("Nobody")).toBeNull();
-  });
-  it("Should PUT the counters of the matching player to its id", async () => {
+  it("Should send the same request for a known player and a new player", async () => {
     const { ref } = await renderLoaded();
 
     ref.current.updatePlayer("Steve", "win");
+    ref.current.updatePlayer("Ann", "win");
     await flushPromises();
 
-    expect(axios.put).toHaveBeenCalledTimes(1);
-    expect(axios.put).toHaveBeenCalledWith("/api/v1/players/3", {
-      player: { wins: 21, losses: 5, draws: 10 }
-    });
-    expect(axios.post).not.toHaveBeenCalled();
+    expect(axios.post).toHaveBeenCalledTimes(2);
+    expect(axios.post).toHaveBeenNthCalledWith(1, "/api/v1/players/results", { name: "Steve", result: "win" });
+    expect(axios.post).toHaveBeenNthCalledWith(2, "/api/v1/players/results", { name: "Ann", result: "win" });
+    expect(axios.put).not.toHaveBeenCalled();
   });
-  it("Should update only the row of the matching player", async () => {
+  it("Should replace the row with the same id", async () => {
     const { ref, component } = await renderLoaded();
 
     ref.current.updatePlayer("Steve", "draw");
@@ -83,6 +83,36 @@ describe("Scoreboard returning player", () => {
       ["Bob", "0", "2", "1"]
     ]);
   });
+  it("Should count two quick results for a known player", async () => {
+    //The test decides when each request returns
+    const resolvers = [];
+    axios.post.mockImplementation(
+      () => new Promise(resolve => resolvers.push(resolve))
+    );
+    const { ref, component } = await renderLoaded();
+
+    ref.current.updatePlayer("Steve", "win");
+    ref.current.updatePlayer("Steve", "win");
+    await flushPromises();
+    //Both results go to the server before any response returns
+    expect(axios.post).toHaveBeenCalledTimes(2);
+    expect(axios.post.mock.calls.map(call => call[1])).toEqual([
+      { name: "Steve", result: "win" },
+      { name: "Steve", result: "win" }
+    ]);
+
+    resolvers[0]({ data: { id: 3, name: "Steve", wins: 21, losses: 5, draws: 10 } });
+    await flushPromises();
+    resolvers[1]({ data: { id: 3, name: "Steve", wins: 22, losses: 5, draws: 10 } });
+    await flushPromises();
+
+    expect(rows(component)).toEqual([
+      ["Jeff", "10", "2", "4"],
+      ["Steve", "22", "5", "10"],
+      ["Bob", "0", "2", "1"]
+    ]);
+    expect(axios.put).not.toHaveBeenCalled();
+  });
 });
 
 describe("Scoreboard new player", () => {
@@ -92,15 +122,12 @@ describe("Scoreboard new player", () => {
       .slice(1) //Skip the header row
       .map(row => Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim()));
 
-  it("Should wait for the POST of a new player before a second result", async () => {
+  it("Should append a new player once", async () => {
     axios.get.mockResolvedValue({ data: [] });
-    //The test decides when the POST returns
-    let resolvePost;
+    //The test decides when each request returns
+    const resolvers = [];
     axios.post.mockImplementation(
-      (url, body) =>
-        new Promise(resolve => {
-          resolvePost = () => resolve({ data: { id: 5, ...body.player } });
-        })
+      () => new Promise(resolve => resolvers.push(resolve))
     );
     const ref = React.createRef();
     const component = render(<Scoreboard ref={ref} />);
@@ -109,16 +136,16 @@ describe("Scoreboard new player", () => {
     ref.current.updatePlayer("Ann", "win");
     ref.current.updatePlayer("Ann", "win");
     await flushPromises();
-    expect(axios.post).toHaveBeenCalledTimes(1);
+    expect(axios.post).toHaveBeenCalledTimes(2);
 
-    resolvePost();
+    resolvers[0]({ data: { id: 5, name: "Ann", wins: 1, losses: 0, draws: 0 } });
+    await flushPromises();
+    expect(rows(component)).toEqual([["Ann", "1", "0", "0"]]);
+
+    resolvers[1]({ data: { id: 5, name: "Ann", wins: 2, losses: 0, draws: 0 } });
     await flushPromises();
 
-    expect(axios.post).toHaveBeenCalledTimes(1);
-    expect(axios.put).toHaveBeenCalledTimes(1);
-    expect(axios.put).toHaveBeenCalledWith("/api/v1/players/5", {
-      player: { wins: 2, losses: 0, draws: 0 }
-    });
     expect(rows(component)).toEqual([["Ann", "2", "0", "0"]]);
+    expect(axios.put).not.toHaveBeenCalled();
   });
 });

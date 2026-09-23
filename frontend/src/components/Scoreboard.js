@@ -6,7 +6,6 @@ class Scoreboard extends React.Component {
   _state = {
     players: []
   };
-  creating = {}; //POSTs in flight, by player name
   get state() {
     return this._state;
   }
@@ -27,86 +26,27 @@ class Scoreboard extends React.Component {
       })
       .catch(error => console.log(error));
   }
-  createPlayer(name, result) {
-    //Create a new player, sending result of their first match
-    let [wins, losses, draws] = [0,0,0];
-
-    if (result === "win") {
-      wins++;
-    } else if (result === "loss") {
-      losses++;
-    } else if (result === "draw") {
-      draws++;
-    } else {
-      alert("Invalid game result passed!");
-      return Promise.resolve();
-    }
-    return axios
-      .post("/api/v1/players", { player: { name, wins, losses, draws } })
-      .then(response => {
-        const players = [...this.state.players, response.data];
-        this.setState(state => {
-          return { players: players };
-        });
-      });
-  }
-  
+  //Send one result to the server. The server finds or creates the player by
+  //name and adds 1 to the counter, so two quick results both count.
   updatePlayer(name, result) {
-    if (this.creating[name]) {
-      //The player is still being created; wait so the result goes to its id
-      this.creating[name].then(() => this.updatePlayer(name, result));
-      return;
-    }
-    const id = this.playerIndex(name);
-    if (!id) {
-      //New player, first create in database
-      const creating = this.createPlayer(name, result)
-        .catch(error => console.log(error))
-        .then(() => {
-          delete this.creating[name];
-        });
-      this.creating[name] = creating;
-    } else {
-        const players = this.state.players.slice();
-        const row = players.findIndex((player) => {return player.id === id});
-        const player = players[row];
-        let wins = player.wins;
-        let losses = player.losses;
-        let draws = player.draws;
-        if (result === "win") {
-          wins++;
-        } else if (result === "loss") {
-          losses++;
-        } else if (result === "draw") {
-          draws++;
-        } else {
-          alert("Invalid game result passed!");
-          return;
-        }
-        axios
-          .put("/api/v1/players/" + id, {
-            player: {
-              wins,
-              losses,
-              draws
-            }
-          })
-          .then(response => {
-            players[row] = { id, name, wins, losses, draws };
-            this.setState(() => ({
-              players,
-              editingPlayerId: null
-            }));
-          })
-          .catch(error => console.log(error)
-          );
-    }
+    return axios
+      .post("/api/v1/players/results", { name, result })
+      .then(response => this.savePlayer(response.data))
+      .catch(error => console.log(error));
   }
 
-  playerIndex(name) {
-    const player = this.state.players.find((player) => {return player.name === name});
-
-    return player ? player.id : null;
+  //Put the saved player in the table: replace the row with the same id, or append it
+  savePlayer(player) {
+    this.setState(state => {
+      const players = state.players.slice();
+      const row = players.findIndex(other => other.id === player.id);
+      if (row === -1) {
+        players.push(player);
+      } else {
+        players[row] = player;
+      }
+      return { players };
+    });
   }
 
   render() {

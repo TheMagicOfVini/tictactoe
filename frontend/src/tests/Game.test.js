@@ -11,8 +11,17 @@ beforeEach(() => {
   axios.post.mockReset();
   axios.put.mockReset();
   axios.get.mockResolvedValue({ data: [] });
+  //The results endpoint returns the saved player
   axios.post.mockImplementation((url, body) =>
-    Promise.resolve({ data: { id: axios.post.mock.calls.length, ...body.player } })
+    Promise.resolve({
+      data: {
+        id: axios.post.mock.calls.length,
+        name: body.name,
+        wins: body.result === "win" ? 1 : 0,
+        losses: body.result === "loss" ? 1 : 0,
+        draws: body.result === "draw" ? 1 : 0
+      }
+    })
   );
   axios.put.mockResolvedValue({ data: {} });
 });
@@ -209,14 +218,26 @@ describe("Board draw", () => {
     submitNames(board, "Bob", "Alice");
     playDraw(board);
 
-    const posted = axios.post.mock.calls.map(call => call[1].player);
-    expect(posted).toHaveLength(2);
-    expect(posted).toEqual(
+    expect(axios.post).toHaveBeenCalledTimes(2);
+    expect(axios.post.mock.calls).toEqual(
       expect.arrayContaining([
-        { name: "Bob", wins: 0, losses: 0, draws: 1 },
-        { name: "Alice", wins: 0, losses: 0, draws: 1 }
+        ["/api/v1/players/results", { name: "Bob", result: "draw" }],
+        ["/api/v1/players/results", { name: "Alice", result: "draw" }]
       ])
     );
+    expect(axios.put).not.toHaveBeenCalled();
+  });
+  it("Should send one results request for each player, with only name and result", () => {
+    const board = render(<Board />);
+    submitNames(board, "Bob", "Alice");
+    playDraw(board);
+
+    expect(axios.post).toHaveBeenCalledTimes(2);
+    axios.post.mock.calls.forEach(([url, body]) => {
+      expect(url).toBe("/api/v1/players/results");
+      expect(Object.keys(body).sort()).toEqual(["name", "result"]);
+    });
+    expect(axios.post.mock.calls.map(call => call[1].name).sort()).toEqual(["Alice", "Bob"]);
     expect(axios.put).not.toHaveBeenCalled();
   });
 });
@@ -228,7 +249,11 @@ describe("Board win", () => {
     const squares = board.queryAllByTestId("board-square");
     winOrder.forEach(i => fireEvent.click(squares[i]));
   };
-  const posted = () => axios.post.mock.calls.map(call => call[1].player);
+  const posted = () =>
+    axios.post.mock.calls.map(([url, body]) => {
+      expect(url).toBe("/api/v1/players/results");
+      return body;
+    });
   const firstMover = mark => {
     //Board moves X first when Math.random() < 0.5
     jest.spyOn(Math, "random").mockReturnValue(mark === "X" ? 0.1 : 0.9);
@@ -247,8 +272,8 @@ describe("Board win", () => {
     expect(posted()).toHaveLength(2);
     expect(posted()).toEqual(
       expect.arrayContaining([
-        { name: "Bob", wins: 1, losses: 0, draws: 0 },
-        { name: "Alice", wins: 0, losses: 1, draws: 0 }
+        { name: "Bob", result: "win" },
+        { name: "Alice", result: "loss" }
       ])
     );
   });
@@ -261,8 +286,8 @@ describe("Board win", () => {
     expect(posted()).toHaveLength(2);
     expect(posted()).toEqual(
       expect.arrayContaining([
-        { name: "Bob", wins: 0, losses: 1, draws: 0 },
-        { name: "Alice", wins: 1, losses: 0, draws: 0 }
+        { name: "Bob", result: "loss" },
+        { name: "Alice", result: "win" }
       ])
     );
   });
@@ -271,7 +296,7 @@ describe("Board win", () => {
     const board = render(<Board />);
     submitNames(board, "Bob", "Alice");
     playWin(board);
-    //Let the POSTs return, so a second result would be a PUT
+    //Let the results requests return, so both players are known to the Scoreboard
     await new Promise(resolve => setImmediate(resolve));
 
     submitNames(board, "Bob", "Alice");
