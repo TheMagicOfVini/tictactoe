@@ -12,6 +12,29 @@ const loadedPlayers = [
   { id: 3, name: "Steve", wins: 20, losses: 5, draws: 10 },
   { id: 12, name: "Bob", wins: 0, losses: 2, draws: 1 }
 ];
+const loadedRows = [
+  ["Jeff", "10", "2", "4"],
+  ["Steve", "20", "5", "10"],
+  ["Bob", "0", "2", "1"]
+];
+
+//The jsdom in these tests has no MutationObserver, so findBy* and waitFor fail.
+//Let the mocked axios promises settle instead.
+const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+
+//Render the Scoreboard with a ref and let the mocked GET return
+const renderLoaded = async () => {
+  const ref = React.createRef();
+  const component = render(<Scoreboard ref={ref} />);
+  await flushPromises();
+  return { ref, component };
+};
+
+//The table body as text, without the header row
+const rows = component =>
+  Array.from(component.container.querySelectorAll("tr"))
+    .slice(1)
+    .map(row => Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim()));
 
 beforeEach(() => {
   axios.get.mockReset();
@@ -28,37 +51,41 @@ beforeEach(() => {
   });
 });
 
-const playerMocks = {
-  players: [
-      { id: 1, name: "Jeff", wins: 10, losses: 2, draws: 4 },
-      { id: 2, name: "Steve", wins: 20, losses: 5, draws: 10 },
-      { id: 3, name: "Bob", wins: 0, losses: 2, draws: 1 },
-    ]
-};
-
-describe("Scoreboard: ", () => {
-  it("should render", () => {
-    const component = render(<Scoreboard {...playerMocks} />);
+describe("Scoreboard on mount", () => {
+  it("Should render", async () => {
+    const { component } = await renderLoaded();
 
     expect(component.queryByTestId("game-scoreboard")).not.toBeNull();
+  });
+  it("Should fetch the players and render one row each", async () => {
+    const { component } = await renderLoaded();
+
+    expect(axios.get).toHaveBeenCalledTimes(1);
+    expect(axios.get).toHaveBeenCalledWith("/api/v1/players.json");
+    expect(rows(component)).toEqual(loadedRows);
+  });
+  it("Should set the tab title", async () => {
+    document.title = "";
+
+    await renderLoaded();
+
+    expect(document.title).toBe("Tic Tac Toe");
+  });
+  it("Should log a failed fetch and render an empty table", async () => {
+    const error = new Error("Network Error");
+    axios.get.mockRejectedValue(error);
+    const log = jest.spyOn(console, "log").mockImplementation(() => {});
+
+    const { component } = await renderLoaded();
+
+    expect(log).toHaveBeenCalledWith(error);
+    expect(component.queryByTestId("game-scoreboard")).not.toBeNull();
+    expect(rows(component)).toEqual([]);
+    log.mockRestore();
   });
 });
 
 describe("Scoreboard returning player", () => {
-  //The jsdom in these tests has no MutationObserver, so findBy* and waitFor fail.
-  //Let the mocked axios promises settle instead.
-  const flushPromises = () => new Promise(resolve => setImmediate(resolve));
-  const renderLoaded = async () => {
-    const ref = React.createRef();
-    const component = render(<Scoreboard ref={ref} />);
-    await flushPromises();
-    return { ref, component };
-  };
-  const rows = component =>
-    Array.from(component.container.querySelectorAll("tr"))
-      .slice(1) //Skip the header row
-      .map(row => Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim()));
-
   it("Should send the same request for a known player and a new player", async () => {
     const { ref } = await renderLoaded();
 
@@ -116,12 +143,6 @@ describe("Scoreboard returning player", () => {
 });
 
 describe("Scoreboard new player", () => {
-  const flushPromises = () => new Promise(resolve => setImmediate(resolve));
-  const rows = component =>
-    Array.from(component.container.querySelectorAll("tr"))
-      .slice(1) //Skip the header row
-      .map(row => Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim()));
-
   it("Should append a new player once", async () => {
     axios.get.mockResolvedValue({ data: [] });
     //The test decides when each request returns
@@ -129,9 +150,7 @@ describe("Scoreboard new player", () => {
     axios.post.mockImplementation(
       () => new Promise(resolve => resolvers.push(resolve))
     );
-    const ref = React.createRef();
-    const component = render(<Scoreboard ref={ref} />);
-    await flushPromises();
+    const { ref, component } = await renderLoaded();
 
     ref.current.updatePlayer("Ann", "win");
     ref.current.updatePlayer("Ann", "win");
@@ -153,17 +172,14 @@ describe("Scoreboard new player", () => {
     axios.post.mockRejectedValueOnce(error);
     const alert = jest.spyOn(window, "alert").mockImplementation(() => {});
     const log = jest.spyOn(console, "log").mockImplementation(() => {});
-    const ref = React.createRef();
-    const component = render(<Scoreboard ref={ref} />);
-    await flushPromises();
-    const before = rows(component);
+    const { ref, component } = await renderLoaded();
+    expect(rows(component)).toEqual(loadedRows);
 
     ref.current.updatePlayer("Ann", "tie");
     await flushPromises();
 
     expect(axios.post).toHaveBeenCalledWith("/api/v1/players/results", { name: "Ann", result: "tie" });
-    expect(rows(component)).toEqual(before);
-    expect(before).toHaveLength(loadedPlayers.length);
+    expect(rows(component)).toEqual(loadedRows);
     expect(log).toHaveBeenCalledWith(error);
     expect(alert).not.toHaveBeenCalled();
     alert.mockRestore();

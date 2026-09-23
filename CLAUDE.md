@@ -18,4 +18,5 @@ Do the steps in order. Each step ends on its completion criterion.
 
 - The jsdom version in the tests does not support named access to form fields (`form.player_one`). Use `form.elements.namedItem("player_one")` in code and in tests.
 - The "Set Names" popup stays open after a submit. A second click on its trigger closes it. Open it only if no `form` is in the document.
-- The Scoreboard sends an axios request when it mounts. In the tests the request fails and logs "Network Error". This noise does not fail a test. E6-S8 adds the axios mock.
+- The Scoreboard sends an axios request when it mounts. Every component test mocks `axios` with `jest.mock("axios", ...)` and sets `axios.get` to resolve in a `beforeEach`. A test that renders `App`, `Board` or `Scoreboard` without the mock sends a real request and can log "Network Error".
+- The jsdom in the tests has no `MutationObserver`, so `findBy*` and `waitFor` fail. Flush the mocked promises with `await new Promise(resolve => setImmediate(resolve))` instead.

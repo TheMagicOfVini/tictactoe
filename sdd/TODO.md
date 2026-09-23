@@ -9,10 +9,30 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 - [x] invalid names are accepted silently; the form shows no error (see [E6-S6](31-e6-s6-tighten-name-validation-and-match-lifecycle.md)).
 - [x] changing names mid-match does not reset the board (see [E6-S6](31-e6-s6-tighten-name-validation-and-match-lifecycle.md)).
 
+## E1-S3 Block play until players are set (03-e1-s3-block-play-until-players-are-set.md)
+
+- [x] no test clicks a square before the names are set (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
+
+## E2-S3 Take turns placing marks (06-e2-s3-take-turns-placing-marks.md)
+
+- [x] no test checks the mark of each click, the "`<name>`'s turn!" status or a click on a claimed square (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
+
+## E2-S4 Detect a win (07-e2-s4-detect-a-win.md)
+
+- [x] no test reads the "Winner: `<name>`" status or clicks after a win (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
+
 ## E2-S5 Detect a draw (08-e2-s5-detect-a-draw.md)
 
 - [x] the draw branch calls `this.child.scoreboard.updatePlayer(...)`, which is undefined and throws at runtime (see [E6-S1](26-e6-s1-fix-crash-on-draw.md)).
 - [x] no test covers a full-board draw, its status message or the draw recorded for each player (see [E6-S1](26-e6-s1-fix-crash-on-draw.md)).
+
+## E2-S6 Start a new game (09-e2-s6-start-a-new-game.md)
+
+- [x] no test clicks "New Game", so the cleared squares, the kept names and the new first mover are not covered (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
+
+## E3-S1 View the scoreboard (10-e3-s1-view-the-scoreboard.md)
+
+- [x] no test asserts the `GET /api/v1/players.json` call on mount, the tab title or the empty table after a failed fetch (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
 
 ## E3-S2 Record a result for a new player (11-e3-s2-record-a-result-for-a-new-player.md)
 
@@ -47,9 +67,16 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 - [x] the spec has no unique name rule. Add the unique index on `name`, the uniqueness validation and the case-sensitive match (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
+## E4-S2 List and fetch players (15-e4-s2-list-and-fetch-players.md)
+
+- [x] the index and show request specs check only the status, not the body (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
+- [x] no request spec covers an unknown id. The test env sets `show_exceptions = false`, so the spec must assert `ActiveRecord::RecordNotFound` and its mapping to 404 (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
+
 ## E4-S3 Create a player (16-e4-s3-create-a-player.md)
 
 - [x] the spec does not say that a POST with a known name returns 422 (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] no request spec checks the `Location` header of a valid create (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
+- [x] no request spec covers a blank name and the 422 body (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
 
 ## E4-S4 Update a player's stats (17-e4-s4-update-a-player-s-stats.md)
 
@@ -79,9 +106,15 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 
 - [x] the spec does not say that a second `db:seed` makes no duplicate player (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
+## E5-S3 Front-end unit tests (23-e5-s3-front-end-unit-tests.md)
+
+- [x] the Scoreboard "should render" test passes a `players` prop that the component ignores, and the file defines `flushPromises` and `rows` twice (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
+- [x] `App.test.js` uses `ReactDOM.render` and real `axios`, so it sends a real request (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
+
 ## E5-S4 Back-end model tests (24-e5-s4-back-end-model-tests.md)
 
 - [x] the spec has no criterion for a test of the uniqueness of `name` (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] the spec has no criterion for the request specs (see [E6-S8](33-e6-s8-expand-automated-test-coverage.md)).
 
 ## E6: Hardening & Defect Fixes
 
@@ -112,10 +145,10 @@ Each story is a proposed change, not existing behaviour. Sub-items are the story
 - [x] E6-S7 Restrict CORS and protect write endpoints ([32-e6-s7-restrict-cors-and-protect-write-endpoints.md](32-e6-s7-restrict-cors-and-protect-write-endpoints.md))
   - [x] CORS origins come from `CORS_ORIGINS` instead of `*`. Production fails to boot when the variable is not set.
   - [x] DELETE and direct PUT/PATCH require an admin credential: the `X-Admin-Token` header must match `ADMIN_TOKEN`. Otherwise they return 401.
-- [ ] E6-S8 Expand automated test coverage ([33-e6-s8-expand-automated-test-coverage.md](33-e6-s8-expand-automated-test-coverage.md))
-  - [ ] RSpec request specs cover index, show, create (valid/invalid), update and destroy, using the existing `RequestSpecHelper`.
-  - [ ] React Testing Library tests cover: clicks ignored before names are set, alternating turns, win and draw status messages, New Game reset, and scoreboard API calls (with axios mocked).
-  - [ ] The Scoreboard test is rewritten; it currently passes a `players` prop the component ignores.
+- [x] E6-S8 Expand automated test coverage ([33-e6-s8-expand-automated-test-coverage.md](33-e6-s8-expand-automated-test-coverage.md))
+  - [x] RSpec request specs cover index, show, create (valid/invalid), update and destroy, using the existing `RequestSpecHelper`.
+  - [x] React Testing Library tests cover: clicks ignored before names are set, alternating turns, win and draw status messages, New Game reset, and scoreboard API calls (with axios mocked).
+  - [x] The Scoreboard test is rewritten; it currently passes a `players` prop the component ignores.
 - [ ] E6-S9 Align docs and tooling versions ([34-e6-s9-align-docs-and-tooling-versions.md](34-e6-s9-align-docs-and-tooling-versions.md))
   - [ ] README Ruby version matches the Gemfile/Dockerfile (2.6.1, not 2.5.3).
   - [ ] README clone URL points at this repository.
