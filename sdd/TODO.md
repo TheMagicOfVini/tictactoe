@@ -60,6 +60,13 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 - [x] no request spec covers the update (see [E6-S4](29-e6-s4-return-the-updated-player-from-put.md)).
 - [x] the spec does not say that a PUT that sets the name of another player returns 422. PUT still accepts absolute counters; [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md) covers the protection of this endpoint (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 
+## E4-S6 Allow cross-origin requests (19-e4-s6-allow-cross-origin-requests.md)
+
+- [x] `cors.rb` allowed all origins (see [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md)).
+- [x] the spec stated all origins as the target (see [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md)).
+- [x] no env var fed the origins (see [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md)).
+- [x] no test covered CORS (see [E6-S7](32-e6-s7-restrict-cors-and-protect-write-endpoints.md)).
+
 ## E4-S7 Seed demo data (20-e4-s7-seed-demo-data.md)
 
 - [x] the spec does not say that a second `db:seed` makes no duplicate player (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
@@ -95,8 +102,8 @@ Each story is a proposed change, not existing behaviour. Sub-items are the story
   - [x] The form shows an error message instead of silently doing nothing.
   - [x] Changing names resets the board.
 - [ ] E6-S7 Restrict CORS and protect write endpoints ([32-e6-s7-restrict-cors-and-protect-write-endpoints.md](32-e6-s7-restrict-cors-and-protect-write-endpoints.md))
-  - [ ] CORS origins come from configuration instead of `*`.
-  - [ ] DELETE (and ideally direct PUT) require an admin credential or are removed from the public API.
+  - [x] CORS origins come from `CORS_ORIGINS` instead of `*`. Production fails to boot when the variable is not set.
+  - [ ] DELETE (and ideally direct PUT) require an admin credential or are removed from the public API. Deferred. See [`enhancements.md`](enhancements.md).
 - [ ] E6-S8 Expand automated test coverage ([33-e6-s8-expand-automated-test-coverage.md](33-e6-s8-expand-automated-test-coverage.md))
   - [ ] RSpec request specs cover index, show, create (valid/invalid), update and destroy, using the existing `RequestSpecHelper`.
   - [ ] React Testing Library tests cover: clicks ignored before names are set, alternating turns, win and draw status messages, New Game reset, and scoreboard API calls (with axios mocked).
