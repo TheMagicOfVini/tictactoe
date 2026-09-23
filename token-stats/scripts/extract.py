@@ -278,7 +278,7 @@ call_fields = ["timestamp", "session_id", "source", "agent_file", "model", "effo
                "est_cost_usd", "stop_reason", "usage_final", "records", "tools", "text_chars", "content_chars", "git_branch", "cwd",
                "message_id", "request_id"]
 with open(os.path.join(OUT, "calls.csv"), "w", newline="") as f:
-    w = csv.DictWriter(f, fieldnames=call_fields, extrasaction="ignore")
+    w = csv.DictWriter(f, fieldnames=call_fields, extrasaction="ignore", lineterminator="\n")
     w.writeheader()
     for c in call_list:
         row = dict(c); row["tools"] = "|".join(c["tools"])
@@ -291,7 +291,7 @@ sess_fields = ["start", "end", "wall_seconds", "session_id", "title", "prompts",
                "est_cost_usd", "reported_cost_usd", "api_seconds", "tool_seconds", "lines_added",
                "lines_removed", "models", "first_prompt"]
 with open(os.path.join(OUT, "sessions.csv"), "w", newline="") as f:
-    w = csv.DictWriter(f, fieldnames=sess_fields, extrasaction="ignore")
+    w = csv.DictWriter(f, fieldnames=sess_fields, extrasaction="ignore", lineterminator="\n")
     w.writeheader()
     for r in sess_rows:
         w.writerow(r)

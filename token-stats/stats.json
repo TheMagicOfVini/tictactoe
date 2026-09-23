@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-23T21:47:27.052344+00:00",
+ "generated_at": "2026-09-23T21:59:41.402894+00:00",
  "project": "/Users/tmov/repos/cryoport/tictactoe",
  "transcript_roots": [
   "/Users/tmov/.claude/projects/-Users-tmov-repos-cryoport-tictactoe",
@@ -37,25 +37,25 @@
   }
  },
  "totals": {
-  "input_tokens": 4754,
-  "cache_creation_tokens": 2167440,
+  "input_tokens": 5270,
+  "cache_creation_tokens": 2349155,
   "cache_5m_tokens": 765199,
-  "cache_1h_tokens": 1402241,
-  "cache_read_tokens": 49523491,
-  "output_tokens": 428243,
-  "thinking_tokens": 86503,
-  "calls": 674,
-  "est_cost_usd": 43.55962094999998,
+  "cache_1h_tokens": 1583956,
+  "cache_read_tokens": 52341280,
+  "output_tokens": 451886,
+  "thinking_tokens": 88358,
+  "calls": 692,
+  "est_cost_usd": 49.08567819999998,
   "output_estimated_calls": 140
  },
  "totals_extra": {
   "sessions": 19,
-  "prompts": 100,
+  "prompts": 102,
   "subagent_runs": 15,
   "reported_cost_usd": 38.49962934999999,
-  "total_tokens": 52123928,
+  "total_tokens": 55147591,
   "first_call": "2026-09-23T18:09:52.556Z",
-  "last_call": "2026-09-23T21:47:04.642Z"
+  "last_call": "2026-09-23T21:59:37.900Z"
  },
  "by_model": {
   "claude-opus-5-5": {
@@ -71,15 +71,15 @@
    "output_estimated_calls": 73
   },
   "claude-fable-5-1": {
-   "input_tokens": 3626,
-   "cache_creation_tokens": 598377,
+   "input_tokens": 4142,
+   "cache_creation_tokens": 780092,
    "cache_5m_tokens": 0,
-   "cache_1h_tokens": 598377,
-   "cache_read_tokens": 9735895,
-   "output_tokens": 120806,
-   "thinking_tokens": 31913,
-   "calls": 127,
-   "est_cost_usd": 20.47807375000001,
+   "cache_1h_tokens": 780092,
+   "cache_read_tokens": 12553684,
+   "output_tokens": 144449,
+   "thinking_tokens": 33768,
+   "calls": 145,
+   "est_cost_usd": 26.004131000000008,
    "output_estimated_calls": 1
   },
   "claude-sonnet-5": {
@@ -146,28 +146,28 @@
    "est_cost_usd": 20.669603199999994
   },
   "high": {
-   "input_tokens": 3814,
-   "cache_creation_tokens": 962967,
+   "input_tokens": 4330,
+   "cache_creation_tokens": 1144682,
    "cache_5m_tokens": 364590,
-   "cache_1h_tokens": 598377,
-   "cache_read_tokens": 15364960,
-   "output_tokens": 158234,
-   "thinking_tokens": 38721,
-   "calls": 221,
-   "est_cost_usd": 22.890017750000013
+   "cache_1h_tokens": 780092,
+   "cache_read_tokens": 18182749,
+   "output_tokens": 181877,
+   "thinking_tokens": 40576,
+   "calls": 239,
+   "est_cost_usd": 28.416075000000014
   }
  },
  "by_source": {
   "main": {
-   "input_tokens": 4402,
-   "cache_creation_tokens": 1402241,
+   "input_tokens": 4918,
+   "cache_creation_tokens": 1583956,
    "cache_5m_tokens": 0,
-   "cache_1h_tokens": 1402241,
-   "cache_read_tokens": 39739233,
-   "output_tokens": 350781,
-   "thinking_tokens": 79630,
-   "calls": 498,
-   "est_cost_usd": 37.512257350000006
+   "cache_1h_tokens": 1583956,
+   "cache_read_tokens": 42557022,
+   "output_tokens": 374424,
+   "thinking_tokens": 81485,
+   "calls": 516,
+   "est_cost_usd": 43.03831460000001
   },
   "subagent": {
    "input_tokens": 352,
@@ -216,41 +216,41 @@
    "est_cost_usd": 9.682396400000005
   },
   "2026-09-23T21": {
-   "input_tokens": 2136,
-   "cache_creation_tokens": 958717,
+   "input_tokens": 2652,
+   "cache_creation_tokens": 1140432,
    "cache_5m_tokens": 396856,
-   "cache_1h_tokens": 561861,
-   "cache_read_tokens": 18552432,
-   "output_tokens": 173429,
-   "thinking_tokens": 36713,
-   "calls": 248,
-   "est_cost_usd": 19.69869480000001
+   "cache_1h_tokens": 743576,
+   "cache_read_tokens": 21370221,
+   "output_tokens": 197072,
+   "thinking_tokens": 38568,
+   "calls": 266,
+   "est_cost_usd": 25.224752050000006
   }
  },
  "by_tool": {
-  "Bash": 450,
-  "Write": 43,
+  "Bash": 457,
+  "Write": 44,
   "Read": 41,
   "Edit": 30,
-  "mcp__claude-in-chrome__computer": 20,
+  "mcp__claude-in-chrome__computer": 23,
   "Agent": 15,
   "SubagentHandback": 15,
   "mcp__claude-in-chrome__javascript_tool": 14,
-  "mcp__claude-in-chrome__browser_batch": 11,
-  "ToolSearch": 8,
-  "mcp__claude-in-chrome__navigate": 7,
+  "mcp__claude-in-chrome__browser_batch": 14,
+  "ToolSearch": 10,
+  "mcp__claude-in-chrome__navigate": 10,
   "AskUserQuestion": 6,
   "ExitPlanMode": 5,
   "Skill": 5,
+  "mcp__claude-in-chrome__read_console_messages": 4,
   "mcp__svelte__svelte-autofixer": 3,
   "mcp__claude-in-chrome__tabs_context_mcp": 2,
-  "mcp__claude-in-chrome__read_console_messages": 2,
   "mcp__claude-in-chrome__find": 1,
   "mcp__claude-in-chrome__tabs_close_mcp": 1
  },
  "by_stop_reason": {
-  "tool_use": 422,
-  "end_turn": 112,
+  "tool_use": 438,
+  "end_turn": 114,
   "no_final_record": 140
  },
  "sessions": [
@@ -1617,24 +1617,24 @@
    "slug": null,
    "first_prompt": "please read all the token stats for this project so far, then create an html report and save the stats into a format that I can look for insights",
    "start": "2026-09-23T21:43:02.575Z",
-   "end": "2026-09-23T21:47:24.886Z",
-   "wall_seconds": 262.311,
-   "prompts": 1,
-   "tool_results": 9,
-   "calls": 9,
+   "end": "2026-09-23T21:59:37.900Z",
+   "wall_seconds": 995.325,
+   "prompts": 3,
+   "tool_results": 30,
+   "calls": 27,
    "subagent_calls": 0,
    "output_estimated_calls": 0,
    "subagents": 0,
-   "input_tokens": 228,
-   "cache_creation_tokens": 100742,
+   "input_tokens": 744,
+   "cache_creation_tokens": 282457,
    "cache_5m_tokens": 0,
-   "cache_1h_tokens": 100742,
-   "cache_read_tokens": 673565,
-   "output_tokens": 16625,
-   "thinking_tokens": 4493,
-   "total_tokens": 791160,
-   "peak_context_tokens": 129900,
-   "est_cost_usd": 3.0168,
+   "cache_1h_tokens": 282457,
+   "cache_read_tokens": 3491354,
+   "output_tokens": 40268,
+   "thinking_tokens": 6348,
+   "total_tokens": 3814823,
+   "peak_context_tokens": 191821,
+   "est_cost_usd": 8.5428,
    "reported_cost_usd": null,
    "api_seconds": null,
    "tool_seconds": null,
@@ -1643,22 +1643,27 @@
    "models": "claude-fable-5-1",
    "by_model": {
     "claude-fable-5-1": {
-     "input_tokens": 228,
-     "cache_creation_tokens": 100742,
+     "input_tokens": 744,
+     "cache_creation_tokens": 282457,
      "cache_5m_tokens": 0,
-     "cache_1h_tokens": 100742,
-     "cache_read_tokens": 673565,
-     "output_tokens": 16625,
-     "thinking_tokens": 4493,
-     "calls": 9,
-     "est_cost_usd": 3.01676125
+     "cache_1h_tokens": 282457,
+     "cache_read_tokens": 3491354,
+     "output_tokens": 40268,
+     "thinking_tokens": 6348,
+     "calls": 27,
+     "est_cost_usd": 8.5428185
     }
    },
    "reported_model_usage": null,
    "tools": {
-    "Bash": 7,
+    "Bash": 14,
+    "mcp__claude-in-chrome__navigate": 3,
+    "mcp__claude-in-chrome__computer": 3,
+    "mcp__claude-in-chrome__browser_batch": 3,
     "Skill": 2,
-    "Write": 1
+    "Write": 2,
+    "ToolSearch": 2,
+    "mcp__claude-in-chrome__read_console_messages": 2
    },
    "versions": [
     "2.1.281"
