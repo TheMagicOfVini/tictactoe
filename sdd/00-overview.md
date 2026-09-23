@@ -66,3 +66,7 @@ Stories in Epics 1–5 describe behaviour as implemented. Where the code falls s
 - [32 E6-S7 Restrict CORS and protect write endpoints](32-e6-s7-restrict-cors-and-protect-write-endpoints.md)
 - [33 E6-S8 Expand automated test coverage](33-e6-s8-expand-automated-test-coverage.md)
 - [34 E6-S9 Align docs and tooling versions](34-e6-s9-align-docs-and-tooling-versions.md)
+
+### Enhancements
+
+- [Enhancements](enhancements.md): suggested improvements that are not yet planned as fixes.
