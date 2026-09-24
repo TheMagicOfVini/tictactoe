@@ -2,6 +2,9 @@
 
 class Api::V1::PlayersController < ApplicationController
   RESULT_COLUMNS = { 'win' => :wins, 'loss' => :losses, 'draw' => :draws }.freeze
+  # One result write at a time in this process. Two concurrent creates lock each
+  # other in SQLite, and the busy timeout blocks every Ruby thread while it waits.
+  RESULTS_LOCK = Mutex.new
 
   # The admin check runs first, so a caller without the token gets 401, not 404.
   before_action :require_admin_token, only: %i[update destroy]
@@ -50,10 +53,13 @@ class Api::V1::PlayersController < ApplicationController
     errors[:name] = ["can't be blank"] unless name.is_a?(String) && name.present?
     return render json: errors, status: :unprocessable_entity if errors.any?
 
-    player = find_or_create_player(name)
-    # One atomic SQL update: SET wins = COALESCE(wins, 0) + 1
-    Player.update_counters(player.id, column => 1, touch: true)
-    render json: player.reload, status: :ok
+    player = RESULTS_LOCK.synchronize do
+      found = find_or_create_player(name)
+      # One atomic SQL update: SET wins = COALESCE(wins, 0) + 1
+      Player.update_counters(found.id, column => 1, touch: true)
+      found.reload
+    end
+    render json: player, status: :ok
   end
 
   # DELETE /players/1

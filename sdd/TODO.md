@@ -62,6 +62,9 @@ Gaps found while mapping the code. Each item names the spec it was found in and 
 - [x] the client builds the updated row from local values, not from the response. The endpoint now returns the saved player, and the client puts it in the table (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 - [x] the server does not check `result`. The endpoint now returns 422 for a blank `name` or a `result` that is not `win`, `loss` or `draw` (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
 - [x] no test covers two quick results for a known player (see [E6-S5](30-e6-s5-server-side-result-increments.md)).
+- [x] two results for two new names sent at the same time both return 500 after the 5 s busy timeout, and neither player is saved. The server now writes one result at a time (see [E6-S10](35-e6-s10-record-concurrent-results-without-a-lock-error.md)).
+- [x] two results for the same new name sent at the same time fail the same way (see [E6-S10](35-e6-s10-record-concurrent-results-without-a-lock-error.md)).
+- [x] no test sends two results at the same time from two threads (see [E6-S10](35-e6-s10-record-concurrent-results-without-a-lock-error.md)).
 
 ## E4-S1 Player data model (14-e4-s1-player-data-model.md)
 
@@ -161,3 +164,8 @@ Each story is a proposed change, not existing behaviour. Sub-items are the story
   - [x] README clone URL points at this repository.
   - [x] Committed SQLite databases, `development.log` and the `.seeds.rb.swp` swap file are removed and git-ignored.
   - [x] A back-end spec under `backend/spec/repo/` checks the README, the version files and the git index.
+- [x] E6-S10 Record concurrent results without a lock error ([35-e6-s10-record-concurrent-results-without-a-lock-error.md](35-e6-s10-record-concurrent-results-without-a-lock-error.md))
+  - [x] Two results sent at the same time (two new names, the same new name, or a new and a known name) both return 200 in less than 1 second, and both are saved.
+  - [x] The server writes one result at a time in each process (`RESULTS_LOCK` in the `results` action). The client does not change.
+  - [x] The model keeps the uniqueness validation, and the table keeps the unique index on `name`.
+  - [x] A request spec sends two results concurrently from two threads.
