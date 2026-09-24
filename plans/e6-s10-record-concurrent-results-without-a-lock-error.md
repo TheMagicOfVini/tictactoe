@@ -2,7 +2,7 @@
 
 ## Context
 
-EN-1 in `sdd/enhancements.md` reported that two results sent at the same time both fail with `SQLite3::BusyException` after 5 seconds. This story moves EN-1 into `sdd/35-e6-s10-record-concurrent-results-without-a-lock-error.md`. This plan numbers its criteria.
+EN-1 in `sdd/enhancements.md` reported that two results sent at the same time both fail with `SQLite3::BusyException` after 5 seconds. This story moves EN-1 into `sdd/35-e6-s10-record-concurrent-results-without-a-lock-error.md`. Step 3 put the target behavior in `sdd/13-e3-s4-link-game-outcome-to-scoreboard.md`, the story where the gaps are listed. This plan numbers its criteria.
 
 - R1: two new names at the same time: both 200, both players saved, 1 in each matching counter.
 - R2: the same new name twice at the same time: both 200, one player, 2 results.
